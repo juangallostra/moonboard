@@ -1,7 +1,12 @@
+from PIL import Image, ImageDraw, ImageFont
+import json
+
+
 class MoonBoard():
     """
     Class that encapsulates Moonboard layout info for a specific year
     """
+
     def __init__(self, year_layout: int, image: str, rows: int = 18, cols: int = 11) -> None:
         """
         Initialize a MoonBoard object.
@@ -73,7 +78,153 @@ def get_moonboard(year: int) -> MoonBoard:
     raise ValueError('Invalid year')
 
 
+class RendererConfig():
+    def __init__(self):
+        """
+        Initialize config parameters required for rendering a problem
+        """
+        # colors for different type of holds
+        self._color_map = {
+            'start': (0, 255, 0),  # green
+            'middle': (0, 0, 255),  # blue
+            'top': (255, 0, 0)  # red
+        }
+        self._text_size = 30
+        # geometry of board images
+        self._bbox_side = 51.5
+        self._offset_x = 70
+        self._offset_y = 60
+        self._circle_width = 7
+        self._text_position = (15, 980)
+        self._text_color = (255, 255, 255)
+
 
 class ProblemRenderer():
-    def __init__(self) -> None:
-        pass
+    """
+    Generic class to render a problem on a board
+    """
+
+    def __init__(self, moonboard_layout: MoonBoard, render_config: RendererConfig) -> None:
+        """
+        Initialize a ProblemRenderer object.
+
+        Args:
+            moonboard_layout (MoonBoard): Layout of the Moonboard to render on.
+            render_config (RendererConfig): Config for rendering Moonboard Problems
+        """
+        self._moonboard = moonboard_layout
+        self._render_config = render_config
+
+    def _map_row_to_image(self, row: str) -> int:
+        """
+        Map a board row value to the corresponding image row value
+
+        Args:
+            row (str): Row value to map
+
+        Returns:
+            int: Row in image coordinates
+        """
+        return ord(row.lower()) - ord('a')
+
+    def _map_col_to_image(self, col: str) -> int:
+        """
+        Map a board column value to the corresponding image column value
+
+        Args:
+            col (str): Column value to map
+
+        Returns:
+            int: Column in image coordinates
+        """
+        if isinstance(col, str):
+            col = int(col)
+        return self._moonboard._rows - col
+
+    def _map_coordinates_to_image(self, row: str, col: str) -> tuple:
+        """Map row and column Moonboard coordinates to image coordinates
+
+        Args:
+            row (str): Row to map
+            col (str): Column to map
+
+        Returns:
+            tuple: Row, Column in image coordinates
+        """
+        i = self._map_row_to_image(row)
+        j = self._map_col_to_image(col)
+        return (i, j)
+
+    def _get_text(self, problem: dict) -> str:
+        """
+        Add a short text indicating the problem name and grade
+
+        Args:
+            problem (dict): Moonboard problem info
+
+        Returns:
+            str: Text to add to the rendered image
+        """
+        benchmark = ', Benchmark' if problem.get('IsBenchmark', '') else ''
+        return "{}, {}{}".format(problem['Name'], problem['Grade'], benchmark)
+
+    def render_problem(self, problem: dict, with_info: bool = False, show: bool = True, save: bool = False) -> Image:
+        """
+        Render a Moonboard problem
+
+        Args:
+            problem (dict): problem data, in the format returned by querying the moonboard page
+            with_info (bool, optional): Add problem info to rendered image. Defaults to False.
+            show (bool, optional): Show the rendered problem in the screen. Defaults to True.
+            save (bool, optional): Save image file. Defaults to False.
+
+        Returns:
+            Image: The Rendered problem
+        """
+        with Image.open(self._moonboard._image) as im:
+            draw = ImageDraw.Draw(im)
+            for move in problem['Moves']:
+                typeof_move = 'start' if move['IsStart'] else (
+                    'top' if move['IsEnd'] else 'middle')
+                i, j = self._map_coordinates_to_image(
+                    move['Description'][:1], move['Description'][1:])
+                draw.ellipse(
+                    [
+                        self._render_config._offset_x +
+                        self._render_config._bbox_side*(i),
+                        self._render_config._offset_y +
+                        self._render_config._bbox_side*(j),
+                        self._render_config._offset_x +
+                        self._render_config._bbox_side*(i+1),
+                        self._render_config._offset_y +
+                        self._render_config._bbox_side*(j+1)
+                    ],
+                    fill=None,
+                    outline=self._render_config._color_map[typeof_move],
+                    width=self._render_config._circle_width
+                )
+            if with_info:
+                fnt = ImageFont.truetype(
+                    "fonts/MilkyNice.ttf", self._render_config._text_size)
+                info_text = self._get_text(problem)
+                draw.text(
+                    self._render_config._text_position,
+                    info_text,
+                    self._render_config._text_color,
+                    font=fnt
+                )
+            if show:
+                im.show()
+            if save:
+                im.save(f"{problem.get('Name', 'Unknown')}.png", 'PNG')
+            return im
+
+
+if __name__ == "__main__":
+    # Create Renderer
+    renderer = ProblemRenderer(get_moonboard(2017), RendererConfig())
+    # Load data
+    with open('problems.json', 'r') as f:
+        problems = json.load(f)
+
+    renderer.render_problem(problems['339318'], with_info=True, save=True)
