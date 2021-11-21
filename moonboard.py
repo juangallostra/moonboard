@@ -168,6 +168,61 @@ class ProblemRenderer():
         benchmark = ', Benchmark' if problem.get('IsBenchmark', '') else ''
         return "{}, {}{}".format(problem['Name'], problem['Grade'], benchmark)
 
+    def _draw_problem_moves(self, draw: ImageDraw, problem: dict) -> ImageDraw:
+        """
+        Draw problem moves into the Moonboard layout
+
+        Args:
+            draw (ImageDraw): ImageDraw object to draw on
+            problem (dict): Problem info
+
+        Returns:
+            ImageDraw: Modified ImageDraw object with problem moves drawn
+        """
+        for move in problem['Moves']:
+            typeof_move = 'start' if move['IsStart'] else (
+                'top' if move['IsEnd'] else 'middle')
+            i, j = self._map_coordinates_to_image(
+                move['Description'][:1], move['Description'][1:])
+            draw.ellipse(
+                [
+                    self._render_config._offset_x +
+                    self._render_config._bbox_side*(i),
+                    self._render_config._offset_y +
+                    self._render_config._bbox_side*(j),
+                    self._render_config._offset_x +
+                    self._render_config._bbox_side*(i+1),
+                    self._render_config._offset_y +
+                    self._render_config._bbox_side*(j+1)
+                ],
+                fill=None,
+                outline=self._render_config._color_map[typeof_move],
+                width=self._render_config._circle_width
+            )
+        return draw
+
+    def _draw_problem_info(self, draw: ImageDraw, problem: dict) -> ImageDraw:
+        """
+        Draw problem name, grade and benchmark status on the image
+
+        Args:
+            draw (ImageDraw): Image draw object where the problem is rendered
+            problem (dict): Data of the problem to render
+
+        Returns:
+            ImageDraw: Modified ImageDraw object with the problem 
+            information (name, grade and benchmark status) rendered
+        """
+        fnt = ImageFont.truetype(
+            "fonts/MilkyNice.ttf", self._render_config._text_size)
+        info_text = self._get_text(problem)
+        draw.text(
+            self._render_config._text_position,
+            info_text,
+            self._render_config._text_color,
+            font=fnt
+        )
+
     def render_problem(self, problem: dict, with_info: bool = False, show: bool = True, save: bool = False) -> Image:
         """
         Render a Moonboard problem
@@ -183,36 +238,9 @@ class ProblemRenderer():
         """
         with Image.open(self._moonboard._image) as im:
             draw = ImageDraw.Draw(im)
-            for move in problem['Moves']:
-                typeof_move = 'start' if move['IsStart'] else (
-                    'top' if move['IsEnd'] else 'middle')
-                i, j = self._map_coordinates_to_image(
-                    move['Description'][:1], move['Description'][1:])
-                draw.ellipse(
-                    [
-                        self._render_config._offset_x +
-                        self._render_config._bbox_side*(i),
-                        self._render_config._offset_y +
-                        self._render_config._bbox_side*(j),
-                        self._render_config._offset_x +
-                        self._render_config._bbox_side*(i+1),
-                        self._render_config._offset_y +
-                        self._render_config._bbox_side*(j+1)
-                    ],
-                    fill=None,
-                    outline=self._render_config._color_map[typeof_move],
-                    width=self._render_config._circle_width
-                )
+            draw = self._draw_problem_moves(draw, problem)
             if with_info:
-                fnt = ImageFont.truetype(
-                    "fonts/MilkyNice.ttf", self._render_config._text_size)
-                info_text = self._get_text(problem)
-                draw.text(
-                    self._render_config._text_position,
-                    info_text,
-                    self._render_config._text_color,
-                    font=fnt
-                )
+                self._draw_problem_info(draw, problem)
             if show:
                 im.show()
             if save:
@@ -227,4 +255,4 @@ if __name__ == "__main__":
     with open('problems.json', 'r') as f:
         problems = json.load(f)
 
-    renderer.render_problem(problems['339318'], with_info=True, save=True)
+    renderer.render_problem(problems['339318'], with_info=True)
