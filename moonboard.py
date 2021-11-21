@@ -89,12 +89,13 @@ class RendererConfig():
             'middle': (0, 0, 255),  # blue
             'top': (255, 0, 0)  # red
         }
-        self._text_size = 30
         # geometry of board images
         self._bbox_side = 51.5
         self._offset_x = 70
         self._offset_y = 60
         self._circle_width = 7
+        # text configuration for rendering problem name
+        self._text_size = 30
         self._text_position = (15, 980)
         self._text_color = (255, 255, 255)
 
