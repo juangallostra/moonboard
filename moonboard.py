@@ -251,7 +251,8 @@ class ProblemRenderer():
 
 if __name__ == "__main__":
     # Create Renderer
-    renderer = ProblemRenderer(get_moonboard(2017), RendererConfig())
+    config = RendererConfig()
+    renderer = ProblemRenderer(get_moonboard(2017), config)
     # Load data
     with open('problems.json', 'r') as f:
         problems = json.load(f)
