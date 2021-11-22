@@ -77,6 +77,8 @@ def get_moonboard(year: int) -> MoonBoard:
         return MoonBoard(2017, 'moonboards/2017.jpg')
     elif year == 2019:
         return MoonBoard(2019, 'moonboards/2019.jpg')
+    elif year == 2020:
+        return MoonBoard(2020, 'moonboards/2020.jpg', rows=12)
     raise ValueError('Invalid year')
 
 
@@ -101,6 +103,7 @@ class RendererConfig:
     _text_size: int = 30
     _text_position: Tuple[float, float] = (15, 980)
     _text_color: Tuple[int, int, int] = (255, 255, 255)
+    _font: str = "fonts/MilkyNice.ttf"
 
 
 class ProblemRenderer():
@@ -170,7 +173,7 @@ class ProblemRenderer():
             str: Text to add to the rendered image
         """
         benchmark = ', Benchmark' if problem.get('IsBenchmark', '') else ''
-        return "{}, {}{}".format(problem['Name'], problem['Grade'], benchmark)
+        return f"{problem.get('Name', '')}, {problem.get('Grade', '')}{benchmark}"
 
     def _draw_problem_moves(self, draw: ImageDraw, problem: dict) -> ImageDraw:
         """
@@ -191,13 +194,13 @@ class ProblemRenderer():
             draw.ellipse(
                 [
                     self._render_config._offset_x +
-                    self._render_config._bbox_side*(i),
+                    self._render_config._bbox_side * i,
                     self._render_config._offset_y +
-                    self._render_config._bbox_side*(j),
+                    self._render_config._bbox_side * j,
                     self._render_config._offset_x +
-                    self._render_config._bbox_side*(i+1),
+                    self._render_config._bbox_side * (i+1),
                     self._render_config._offset_y +
-                    self._render_config._bbox_side*(j+1)
+                    self._render_config._bbox_side * (j+1)
                 ],
                 fill=None,
                 outline=self._render_config._color_map[typeof_move],
@@ -218,7 +221,7 @@ class ProblemRenderer():
             information (name, grade and benchmark status) rendered
         """
         fnt = ImageFont.truetype(
-            "fonts/MilkyNice.ttf", self._render_config._text_size)
+            self._render_config._font, self._render_config._text_size)
         info_text = self._get_text(problem)
         draw.text(
             self._render_config._text_position,
