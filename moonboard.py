@@ -1,5 +1,7 @@
+from typing import Tuple
 from PIL import Image, ImageDraw, ImageFont
 import json
+from dataclasses import dataclass
 
 
 class MoonBoard():
@@ -78,26 +80,27 @@ def get_moonboard(year: int) -> MoonBoard:
     raise ValueError('Invalid year')
 
 
-class RendererConfig():
-    def __init__(self):
-        """
-        Initialize config parameters required for rendering a problem
-        """
-        # colors for different type of holds
-        self._color_map = {
-            'start': (0, 255, 0),  # green
-            'middle': (0, 0, 255),  # blue
-            'top': (255, 0, 0)  # red
-        }
-        # geometry of board images
-        self._bbox_side = 51.5
-        self._offset_x = 70
-        self._offset_y = 60
-        self._circle_width = 7
-        # text configuration for rendering problem name
-        self._text_size = 30
-        self._text_position = (15, 980)
-        self._text_color = (255, 255, 255)
+@dataclass
+class RendererConfig:
+    """
+    Class for keeping the configuration parameters of the renderer
+    Default values are set for the following board layouts: 2016, 2017, 2019
+    """
+    # colors for different type of holds
+    _color_map: dict = {
+        'start': (0, 255, 0),  # green
+        'middle': (0, 0, 255),  # blue
+        'top': (255, 0, 0)  # red
+    }
+    # geometry of board images
+    _bbox_side: float = 51.5
+    _offset_x: float = 70
+    _offset_y: float = 60
+    _circle_width: float = 7
+    # text configuration for rendering problem name
+    _text_size: int = 30
+    _text_position: Tuple[float, float] = (15, 980)
+    _text_color: Tuple[int, int, int] = (255, 255, 255)
 
 
 class ProblemRenderer():
@@ -142,7 +145,7 @@ class ProblemRenderer():
             col = int(col)
         return self._moonboard._rows - col
 
-    def _map_coordinates_to_image(self, row: str, col: str) -> tuple:
+    def _map_coordinates_to_image(self, row: str, col: str) -> Tuple[int, int]:
         """Map row and column Moonboard coordinates to image coordinates
 
         Args:
@@ -202,7 +205,7 @@ class ProblemRenderer():
             )
         return draw
 
-    def _draw_problem_info(self, draw: ImageDraw, problem: dict) -> ImageDraw:
+    def _write_problem_info(self, draw: ImageDraw, problem: dict) -> ImageDraw:
         """
         Draw problem name, grade and benchmark status on the image
 
@@ -241,7 +244,7 @@ class ProblemRenderer():
             draw = ImageDraw.Draw(im)
             draw = self._draw_problem_moves(draw, problem)
             if with_info:
-                self._draw_problem_info(draw, problem)
+                self._write_problem_info(draw, problem)
             if show:
                 im.show()
             if save:
