@@ -47,8 +47,9 @@ class MoonboardTests(unittest.TestCase):
         with self.assertRaises(ValueError) as context:
             get_moonboard(year)
         # Then
-        self.assertTrue('Invalid year' in str(
-            context.exception))  # Test error message?
+        self.assertTrue(
+            'Invalid year' in str(context.exception)
+        )  # Test error message?
         self.assertRaises(ValueError, get_moonboard, year)
 
 
