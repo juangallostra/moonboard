@@ -1,5 +1,7 @@
-from typing import Tuple
-from moonboard import BaseProblemAdapter, MoonBoard, RendererConfig
+from typing import Any, Tuple
+from models.problem import Problem
+from moonboard import BaseProblemAdapter, MoonBoard
+from render_config import RendererConfig
 from PIL import Image, ImageDraw, ImageFont
 
 
@@ -30,76 +32,74 @@ class ProblemRenderer():
         """
         return f"{__class__.__name__} for {self._moonboard.get_year_layout()} {self._moonboard.__class__.__name__}"
 
-    def _map_row_to_image(self, row: str) -> int:
+    def _map_row_to_image(self, row: int) -> int:
         """
         Map a board row value to the corresponding image row value
 
         Args:
-            row (str): Row value to map
+            row (int): Row value to map
 
         Returns:
             int: Row in image coordinates
         """
-        return ord(row.lower()) - ord('a')
+        return self._moonboard._rows - row
 
-    def _map_col_to_image(self, col: str) -> int:
+    def _map_col_to_image(self, col: int) -> int:
         """
         Map a board column value to the corresponding image column value
 
         Args:
-            col (str): Column value to map
+            col (int): Column value to map
 
         Returns:
             int: Column in image coordinates
         """
-        if isinstance(col, str):
-            col = int(col)
-        return self._moonboard._rows - col
+        return col
 
-    def _map_coordinates_to_image(self, row: str, col: str) -> Tuple[int, int]:
+    def _map_coordinates_to_image(self, row: int, col: int) -> Tuple[int, int]:
         """
         Map row and column Moonboard coordinates to image coordinates
 
         Args:
-            row (str): Row to map
-            col (str): Column to map
+            row (int): Row to map
+            col (int): Column to map
 
         Returns:
             tuple: Row, Column in image coordinates
         """
         i = self._map_row_to_image(row)
         j = self._map_col_to_image(col)
-        return (i, j)
+        return (j, i)
 
-    def _get_text(self, problem: dict) -> str:
+    def _get_text(self, problem: Problem) -> str:
         """
         Add a short text indicating the problem name and grade
 
         Args:
-            problem (dict): Moonboard problem info
+            problem (Problem): Moonboard problem info
 
         Returns:
             str: Text to add to the rendered image
         """
-        benchmark = ', Benchmark' if problem.get('IsBenchmark', '') else ''
-        return f"{problem.get('Name', '')}, {problem.get('Grade', '')}{benchmark}"
+        benchmark = ', Benchmark' if problem.is_benchmark else ''
+        return f"{problem.name}, {problem.grade}{benchmark}"
 
-    def _draw_problem_moves(self, draw: ImageDraw, problem: dict) -> ImageDraw:
+    def _draw_problem_moves(self, draw: ImageDraw, problem: Problem) -> ImageDraw:
         """
         Draw problem moves into the Moonboard layout
 
         Args:
             draw (ImageDraw): ImageDraw object to draw on
-            problem (dict): Problem info
+            problem (Problem): Problem info
 
         Returns:
             ImageDraw: Modified ImageDraw object with problem moves drawn
         """
-        for move in problem['Moves']:
-            typeof_move = 'start' if move['IsStart'] else (
-                'top' if move['IsEnd'] else 'middle')
+        for move in problem.moves:
+            typeof_move = 'start' if move.is_start else (
+                'top' if move.is_end else 'middle')
             i, j = self._map_coordinates_to_image(
-                move['Description'][:1], move['Description'][1:])
+                move.row, move.column)
             draw.ellipse(
                 [
                     self._render_config._offset_x +
@@ -117,13 +117,13 @@ class ProblemRenderer():
             )
         return draw
 
-    def _write_problem_info(self, draw: ImageDraw, problem: dict) -> ImageDraw:
+    def _write_problem_info(self, draw: ImageDraw, problem: Problem) -> ImageDraw:
         """
         Draw problem name, grade and benchmark status on the image
 
         Args:
             draw (ImageDraw): Image draw object where the problem is rendered
-            problem (dict): Data of the problem to render
+            problem (Problem): Data of the problem to render
 
         Returns:
             ImageDraw: Modified ImageDraw object with the problem 
@@ -139,12 +139,12 @@ class ProblemRenderer():
             font=fnt
         )
 
-    def render_problem(self, problem: dict, with_info: bool = False, show: bool = True, save: bool = False) -> Image:
+    def render_problem(self, problem: Any, with_info: bool = False, show: bool = True, save: bool = False) -> Image:
         """
         Render a Moonboard problem
 
         Args:
-            problem (dict): problem data, in the format returned by querying the moonboard page
+            problem: problem data, in the format returned by querying the moonboard page
             with_info (bool, optional): Add problem info to rendered image. Defaults to False.
             show (bool, optional): Show the rendered problem in the screen. Defaults to True.
             save (bool, optional): Save image file. Defaults to False.
@@ -152,13 +152,14 @@ class ProblemRenderer():
         Returns:
             Image: The Rendered problem
         """
+        parsed_problem = self._problem_adapter.map_problem(problem)
         with Image.open(self._moonboard._image) as im:
             draw = ImageDraw.Draw(im)
-            draw = self._draw_problem_moves(draw, problem)
+            draw = self._draw_problem_moves(draw, parsed_problem)
             if with_info:
-                self._write_problem_info(draw, problem)
+                self._write_problem_info(draw, parsed_problem)
             if show:
                 im.show()
             if save:
-                im.save(f"{problem.get('Name', 'Unknown')}.png", 'PNG')
+                im.save(f"{parsed_problem.name}.png", 'PNG')
             return im

@@ -16,6 +16,8 @@ class Move:
     Information about a move of thr problem.
     """
     id: int
+    row: int
+    column: int
     description: str
     is_start: bool = False
     is_end: bool = False

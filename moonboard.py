@@ -1,8 +1,4 @@
-import json
-from typing import Any, Dict
-from models.problem import Problem
-from problem_renderer import ProblemRenderer
-from render_config import RendererConfig
+from models.problem import Move, Problem, Setter
 
 
 
@@ -12,7 +8,6 @@ class BaseProblemAdapter():
     """
 
     def map_problem(self, problem_data) -> Problem:
-        
         raise NotImplementedError
 
 
@@ -30,7 +25,43 @@ class DefaultProblemAdapter(BaseProblemAdapter):
         Returns:
             Problem: Problem object with the parsed problem data as attributes
         """
-        pass
+        # Make copy of problem data so we don't modify the original
+        problem_data_copy = problem_data.copy()
+        # Parse setter
+        firstname = problem_data_copy['Setter'].pop('Firstname')
+        lastname = problem_data_copy['Setter'].pop('Lastname')
+        nickname = problem_data_copy['Setter'].pop('Nickname')
+        setter = Setter(nickname, firstname, lastname)
+        problem_data_copy['setter'] = setter
+        # Parse moves
+        #  {
+        #      "Id": 1910061,
+        #      "Description": "J4",
+        #      "IsStart": false,
+        #      "IsEnd": false
+        #   }
+        moves = []
+        for move in problem_data_copy.pop('Moves'):
+            id = move['Id']
+            if isinstance(id, str):
+                id = int(id)
+            # row mapping
+            col = move['Description'][0]
+            row = move['Description'][1:] 
+            move_col = ord(col.lower()) - ord('a')
+            move_row = row
+            if isinstance(row, str):
+                move_row = int(row)
+            m = Move(id, move_row, move_col, move['Description'], move['IsStart'], move['IsEnd'])
+            moves.append(m)
+        # Parse rest of data
+        return Problem(
+            problem_data_copy.pop('Name'),
+            problem_data_copy.pop('Grade'),
+            moves,
+            problem_data_copy.pop('IsBenchmark'),
+            **problem_data_copy)
+
 
 class MoonBoard():
     """
@@ -109,13 +140,3 @@ def get_moonboard(year: int) -> MoonBoard:
         return MoonBoard(2020, 'moonboards/2020.jpg', rows=12)
     raise ValueError('Invalid year')
 
-
-if __name__ == "__main__":
-    # Create Renderer
-    config = RendererConfig()
-    renderer = ProblemRenderer(get_moonboard(2017), DefaultProblemAdapter(), config)
-    # Load data
-    with open('problems.json', 'r') as f:
-        problems = json.load(f)
-
-    renderer.render_problem(problems['339318'], with_info=True)
