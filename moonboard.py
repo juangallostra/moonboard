@@ -1,7 +1,7 @@
-from typing import Tuple
+from typing import Tuple, Dict
 from PIL import Image, ImageDraw, ImageFont
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 class MoonBoard():
@@ -89,11 +89,11 @@ class RendererConfig:
     Default values are set for the following board layouts: 2016, 2017, 2019
     """
     # colors for different type of holds
-    _color_map: dict = {
+    _color_map: Dict[str, Tuple[int, int, int]] = field(default_factory=lambda: {
         'start': (0, 255, 0),  # green
         'middle': (0, 0, 255),  # blue
         'top': (255, 0, 0)  # red
-    }
+    })
     # geometry of board images
     _bbox_side: float = 51.5
     _offset_x: float = 70
@@ -121,6 +121,9 @@ class ProblemRenderer():
         """
         self._moonboard = moonboard_layout
         self._render_config = render_config
+
+    def __str__(self) -> str:
+        return f"{__class__.__name__} for {self._moonboard.get_year_layout()} {self._moonboard.__class__.__name__}"
 
     def _map_row_to_image(self, row: str) -> int:
         """
