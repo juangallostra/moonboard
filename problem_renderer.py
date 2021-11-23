@@ -57,7 +57,8 @@ class ProblemRenderer():
         return self._moonboard._rows - col
 
     def _map_coordinates_to_image(self, row: str, col: str) -> Tuple[int, int]:
-        """Map row and column Moonboard coordinates to image coordinates
+        """
+        Map row and column Moonboard coordinates to image coordinates
 
         Args:
             row (str): Row to map
