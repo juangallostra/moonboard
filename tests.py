@@ -21,6 +21,18 @@ from moonboard import MoonBoard, get_moonboard
 
 
 class MoonboardTests(unittest.TestCase):
+    def test_equal_moonboards(self):
+        """
+        Test that two MoonBoard objects with the same parameters are equal
+        """
+        # Given
+        year=2017
+        # When
+        m1  = get_moonboard(year)
+        m2  = get_moonboard(year)
+        # Then
+        self.assertEqual(m1, m2)
+
     def test_get_valid_moonboard(self):
         """
         Test that a valid moon year returns a MoonBoard object

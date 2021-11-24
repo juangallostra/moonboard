@@ -8,6 +8,15 @@ class BaseProblemAdapter():
     """
 
     def map_problem(self, problem_data) -> Problem:
+        """
+        Given the raw data of a problem, convert return a Problem object.
+        
+        :param problem_data: Source from which to map the problem
+        :type problem_data: dict
+        :return: Problem object with the parsed problem data as attributes
+        :rtype: Problem
+        :raises NotImplementedError: If the method is not implemented 
+        """
         raise NotImplementedError
 
 
@@ -84,6 +93,28 @@ class MoonBoard():
         self._image = image
         self._rows = rows
         self._cols = cols
+
+    def __str__(self) -> str:
+        """Get a user friendly string representation of the MoonBoard class
+
+        :return: User firendly string representation if this Moonboard object
+        :rtype: str
+        """
+        return f"{__class__.__name__} for {self._moonboard.get_year_layout()} layout"
+
+    def __hash__(self) -> int:
+        """
+        Compute hash from the year,  image path
+        """
+        return hash(self._year_layout) ^ hash(self._image) ^ hash(self._rows) ^ hash(self._cols)
+    
+    def __eq__(self, __o: object) -> bool:
+        """
+        Test for equality between two MoonBoard objects
+        """
+        if hash(self) != hash(__o): # if hashes are not equal, objects cannot be equal
+            return False
+        return self._year_layout == __o._year_layout and self._image == __o._image and self._rows == __o._rows and self._cols == __o._cols
 
     def get_rows(self) -> int:
         """
