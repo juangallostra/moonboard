@@ -9,7 +9,7 @@ class BaseProblemAdapter():
 
     def map_problem(self, problem_data) -> Problem:
         """
-        Given the raw data of a problem, convert return a Problem object.
+        Given the raw data of a problem, convert it to a Problem object and return it.
         
         :param problem_data: Source from which to map the problem
         :type problem_data: dict

@@ -13,7 +13,7 @@ class Setter:
 @dataclass
 class Move:
     """
-    Information about a move of thr problem.
+    Information about a move of the problem.
     """
     id: int
     row: int
