@@ -19,12 +19,10 @@ class DefaultProblemAdapter(BaseProblemAdapter):
         """
         Given a problem data dictionary, return a Problem object
 
-        Args:
-            problem_data (dict): Source from which to map the problem.
-
-        Returns:
-            Problem: Problem object with the parsed problem data as attributes
-        
+        :param problem_data: Source from which to map the problem
+        :type problem_data: dict
+        :return: Problem object with the parsed problem data as attributes
+        :rtype: Problem
         """
         # Make copy of problem data so we don't modify the original
         problem_data_copy = problem_data.copy()
@@ -66,18 +64,21 @@ class DefaultProblemAdapter(BaseProblemAdapter):
 
 class MoonBoard():
     """
-    Class that encapsulates Moonboard layout info for a specific year
+    Class that encapsulates Moonboard layout info for a specific year.
+
+    :param year_layout: Year in which this board layout was published
+    :type year_layout: int
+    :param image: Path to the image file for this board layout
+    :type image: str
+    :param rows: Number of rows of the board. Defaults to 18
+    :type rows: int, optional
+    :param cols: Number of columns of the board. Defaults to 11
+    :type cols: int, optional
     """
 
     def __init__(self, year_layout: int, image: str, rows: int = 18, cols: int = 11) -> None:
         """
         Initialize a MoonBoard object.
-
-        Args:
-            year_layout (int): Year from which to obtain the Moonboard layout.
-            image (str): path to the moonboard  layout image.
-            rows (int, optional): Number of rows of the board. Defaults to 18.
-            cols (int, optional): Number of rows of the board. Defaults to 11.
         """
         self._year_layout = year_layout
         self._image = image
@@ -126,14 +127,11 @@ def get_moonboard(year: int) -> MoonBoard:
     Given a year, return a Moonboard object encapsulating the
     Moonboard layout info of that year.
 
-    Args:
-        year (int): Year of the desired Moonboard layout.
-
-    Raises:
-        ValueError: Year is not a valid Moonboard year.
-
-    Returns:
-        Moonboard: Moonboard object encapsulating the Moonboard layout info.
+    :param year: Year of the desired Moonboard layout
+    :type year: int
+    :return: Moonboard object encapsulating the Moonboard layout info
+    :rtype: MoonBoard
+    :raises ValueError: Year is not a valid Moonboard year
     """
     if year == 2016:
         return MoonBoard(2016, 'moonboards/2016.jpg')
