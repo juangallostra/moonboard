@@ -24,6 +24,7 @@ class DefaultProblemAdapter(BaseProblemAdapter):
 
         Returns:
             Problem: Problem object with the parsed problem data as attributes
+        
         """
         # Make copy of problem data so we don't modify the original
         problem_data_copy = problem_data.copy()
@@ -84,34 +85,38 @@ class MoonBoard():
         self._cols = cols
 
     def get_rows(self) -> int:
-        """Get number of rows of the board
+        """
+        Get number of rows of the board
 
-        Returns:
-            int: Number of rows of the board
+        :return: Number of rows of the board
+        :rtype: int 
         """
         return self._rows
 
     def get_cols(self) -> int:
-        """Get number of columns of the board
+        """
+        Get number of columns of the board
 
-        Returns:
-            int: Number of columns of the board
+        :return: Number of columns of the board
+        :rtype: int
         """
         return self._cols
 
     def get_year_layout(self) -> int:
-        """Get the year in which this board layout was published
+        """
+        Get the year in which this board layout was published
 
-        Returns:
-            int: year in which this board layout was published
+        :return: Year in which this board layout was published
+        :rtype: int 
         """
         return self._year_layout
 
     def get_image(self) -> str:
-        """Get the path to the image file for this board layout
+        """
+        Get the path to the image file for this board layout
 
-        Returns:
-            str: image path
+        :return: Image path
+        :rtype: str 
         """
         return self._image
 
