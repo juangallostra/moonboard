@@ -135,13 +135,14 @@ class ProblemRenderer():
         Render a Moonboard problem
 
         :param problem: Problem data
-        :param with_info: If True, render problem name, grade and benchmark status. False by default.
+        :param with_info: If True, render problem name, grade and benchmark status along the problem. False by default.
         :type with_info: bool
         :param show: If True, show the rendered image. True by default.
         :type show: bool
         :param save: If True, save the rendered image. True by default
         :type save: bool
         :return: Rendered image
+        :rtype: Image
         """
         parsed_problem = self._problem_adapter.map_problem(problem)
         with Image.open(self._moonboard._image) as im:
