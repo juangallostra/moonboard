@@ -95,18 +95,18 @@ class ProblemRenderer():
                 move.row, move.column)
             draw.ellipse(
                 [
-                    self._render_config._offset_x +
-                    self._render_config._bbox_side * i,
-                    self._render_config._offset_y +
-                    self._render_config._bbox_side * j,
-                    self._render_config._offset_x +
-                    self._render_config._bbox_side * (i+1),
-                    self._render_config._offset_y +
-                    self._render_config._bbox_side * (j+1)
+                    self._render_config.offset_x +
+                    self._render_config.bbox_side * i,
+                    self._render_config.offset_y +
+                    self._render_config.bbox_side * j,
+                    self._render_config.offset_x +
+                    self._render_config.bbox_side * (i+1),
+                    self._render_config.offset_y +
+                    self._render_config.bbox_side * (j+1)
                 ],
                 fill=None,
-                outline=self._render_config._color_map[typeof_move],
-                width=self._render_config._circle_width
+                outline=self._render_config.color_map[typeof_move],
+                width=self._render_config.circle_width
             )
         return draw
 
@@ -121,12 +121,12 @@ class ProblemRenderer():
         :return: Modified ImageDraw object with the problem information (name, grade and benchmark status) rendered
         """
         fnt = ImageFont.truetype(
-            self._render_config._font, self._render_config._text_size)
+            self._render_config.font, self._render_config.text_size)
         info_text = self._get_text(problem)
         draw.text(
-            self._render_config._text_position,
+            self._render_config.text_position,
             info_text,
-            self._render_config._text_color,
+            self._render_config.text_color,
             font=fnt
         )
 
