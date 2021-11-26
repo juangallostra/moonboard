@@ -1,74 +1,3 @@
-from models.problem import Move, Problem, Setter
-
-
-
-class BaseProblemAdapter():
-    """
-    Map problem data to a Python object that the renderer can use.
-    """
-
-    def map_problem(self, problem_data) -> Problem:
-        """
-        Given the raw data of a problem, convert it to a Problem object and return it.
-        
-        :param problem_data: Source from which to map the problem
-        :type problem_data: dict
-        :return: Problem object with the parsed problem data as attributes
-        :rtype: Problem
-        :raises NotImplementedError: If the method is not implemented 
-        """
-        raise NotImplementedError
-
-
-class DefaultProblemAdapter(BaseProblemAdapter):
-    """
-    Map problem data to a Python object that the renderer can use.
-    """
-    def map_problem(self, problem_data: dict) -> Problem:
-        """
-        Given a problem data dictionary, return a Problem object
-
-        :param problem_data: Source from which to map the problem
-        :type problem_data: dict
-        :return: Problem object with the parsed problem data as attributes
-        :rtype: Problem
-        """
-        # Make copy of problem data so we don't modify the original
-        problem_data_copy = problem_data.copy()
-        # Parse setter
-        firstname = problem_data_copy['Setter'].pop('Firstname')
-        lastname = problem_data_copy['Setter'].pop('Lastname')
-        nickname = problem_data_copy['Setter'].pop('Nickname')
-        setter = Setter(nickname, firstname, lastname)
-        problem_data_copy['setter'] = setter
-        # Parse moves
-        #  {
-        #      "Id": 1910061,
-        #      "Description": "J4",
-        #      "IsStart": false,
-        #      "IsEnd": false
-        #   }
-        moves = []
-        for move in problem_data_copy.pop('Moves'):
-            id = move['Id']
-            if isinstance(id, str):
-                id = int(id)
-            # row mapping
-            col = move['Description'][0]
-            row = move['Description'][1:] 
-            move_col = ord(col.lower()) - ord('a')
-            move_row = row
-            if isinstance(row, str):
-                move_row = int(row)
-            m = Move(id, move_row, move_col, move['Description'], move['IsStart'], move['IsEnd'])
-            moves.append(m)
-        # Parse rest of data
-        return Problem(
-            problem_data_copy.pop('Name'),
-            problem_data_copy.pop('Grade'),
-            moves,
-            problem_data_copy.pop('IsBenchmark'),
-            **problem_data_copy)
 
 
 class MoonBoard():
@@ -107,12 +36,12 @@ class MoonBoard():
         Compute hash from the year,  image path
         """
         return hash(self._year_layout) ^ hash(self._image) ^ hash(self._rows) ^ hash(self._cols)
-    
+
     def __eq__(self, __o: object) -> bool:
         """
         Test for equality between two MoonBoard objects
         """
-        if hash(self) != hash(__o): # if hashes are not equal, objects cannot be equal
+        if hash(self) != hash(__o):  # if hashes are not equal, objects cannot be equal
             return False
         return self._year_layout == __o._year_layout and self._image == __o._image and self._rows == __o._rows and self._cols == __o._cols
 
@@ -173,4 +102,3 @@ def get_moonboard(year: int) -> MoonBoard:
     elif year == 2020:
         return MoonBoard(2020, 'moonboards/2020.jpg', rows=12)
     raise ValueError('Invalid year')
-

@@ -1,6 +1,7 @@
 from typing import Any, Tuple
 from models.problem import Problem
-from moonboard import BaseProblemAdapter, MoonBoard
+from moonboard import MoonBoard
+from adapters.base_adapter import BaseProblemAdapter
 from render_config import RendererConfig
 from PIL import Image, ImageDraw, ImageFont
 
