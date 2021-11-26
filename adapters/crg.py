@@ -27,13 +27,13 @@ class CRGProblemAdapter(BaseProblemAdapter):
             # row mapping and col mapping -> zero based
             col = problem_data_copy[move_idx][0]
             row = problem_data_copy[move_idx][1] + 1
-            is_start = problem_data_copy[move_idx][2] == "s"
-            is_end = problem_data_copy[move_idx][2] == "f"
+            is_start = problem_data_copy[move_idx][2] == 's'
+            is_end = problem_data_copy[move_idx][2] == 'f'
             m = Move(id, row, col, str(row) + ' ' + str(col), is_start, is_end)
             moves.append(m)
         # Parse rest of data
         return Problem(
-            "",
-            "",
+            '',
+            '',
             moves,
             False)
