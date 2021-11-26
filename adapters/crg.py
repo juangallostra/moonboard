@@ -2,10 +2,12 @@ from typing import Any, List
 from adapters.base_adapter import BaseProblemAdapter
 from models.problem import Problem, Move
 
+
 class CRGProblemAdapter(BaseProblemAdapter):
     """
     Map problem data to a Python object that the renderer can use.
     """
+
     def map_problem(self, problem_data: List[Any]) -> Problem:
         """
         Given a problem data dictionary, return a Problem object

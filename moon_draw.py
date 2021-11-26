@@ -1,6 +1,7 @@
 from PIL import Image, ImageDraw, ImageFont
 import json
 
+
 class DrawBoard():
     def __init__(self, rows, columns, image_path=None):
         self._rows = rows
@@ -8,9 +9,9 @@ class DrawBoard():
         self._image_path = image_path
         # colors for different type of holds
         self._color_map = {
-            'start':(0, 255, 0), # green
-            'middle': (0, 0, 255), # blue
-            'top': (255, 0, 0) # red
+            'start': (0, 255, 0),  # green
+            'middle': (0, 0, 255),  # blue
+            'top': (255, 0, 0)  # red
         }
         self._text_size = 30
 
@@ -19,7 +20,7 @@ class DrawBoard():
         Should map board row and col to image x y coordinates 
         """
         raise NotImplementedError
-    
+
     def _get_info_text(self):
         """
         Should return the position, text and color to be written
@@ -31,8 +32,10 @@ class DrawBoard():
         with Image.open(self._image_path) as im:
             draw = ImageDraw.Draw(im)
             for move in problem['Moves']:
-                typeof_move = 'start' if move['IsStart'] else ('top' if move['IsEnd'] else 'middle')
-                i, j = self._map_coordinates(move['Description'][:1], move['Description'][1:])
+                typeof_move = 'start' if move['IsStart'] else (
+                    'top' if move['IsEnd'] else 'middle')
+                i, j = self._map_coordinates(
+                    move['Description'][:1], move['Description'][1:])
                 draw.ellipse(
                     [
                         self._offset_x + self._bbox_side*(i),
@@ -43,9 +46,10 @@ class DrawBoard():
                     fill=None,
                     outline=self._color_map[typeof_move],
                     width=self._circle_width
-                    )
+                )
             if with_info:
-                fnt = ImageFont.truetype("fonts/MilkyNice.ttf", self._text_size)
+                fnt = ImageFont.truetype(
+                    "fonts/MilkyNice.ttf", self._text_size)
                 pos, info_text, color = self._get_info_text(problem)
                 draw.text(
                     pos,
@@ -70,9 +74,9 @@ class MoonboardRenderer(DrawBoard):
         # image files
         self._path_to_images = 'moonboards/'
         self._moonboard_version_to_image = {
-            2016:'mbsetup-2016.jpg',
-            2017:'mbsetup-mbm2017.jpg',
-            2019:'mbsetup-mbm2019.jpg'
+            2016: 'mbsetup-2016.jpg',
+            2017: 'mbsetup-mbm2017.jpg',
+            2019: 'mbsetup-mbm2019.jpg'
         }
         self._current_version = 2017
         self._image_path = self.get_moonboard_image_path()
@@ -81,14 +85,14 @@ class MoonboardRenderer(DrawBoard):
         if isinstance(col, str):
             col = int(col)
         return (ord(row.lower()) - ord('a'), self._rows - col)
-    
+
     def _get_info_text(sel, problem):
         benchmark = ', Benchmark' if problem.get('IsBenchmark', '') else ''
         return (15, 980), "{}, {}{}".format(problem['Name'], problem['Grade'], benchmark), (255, 255, 255)
 
     def set_moonboard_version(self, version):
         if version not in self._moonboard_version_to_image.keys():
-            return # TODO: Warn that the version is not valid
+            return  # TODO: Warn that the version is not valid
         self._current_version = version
         # update image path
         self._image_path = self.get_moonboard_image_path()
@@ -116,4 +120,3 @@ if __name__ == "__main__":
     # a.render_problem(problems['341207'])
     # a.render_problem(problems['341203'])
     a.render_problem(problems['339318'], with_info=True)
-    

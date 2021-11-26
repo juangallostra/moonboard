@@ -26,10 +26,10 @@ class MoonboardTests(unittest.TestCase):
         Test that two MoonBoard objects with the same parameters are equal
         """
         # Given
-        year=2017
+        year = 2017
         # When
-        m1  = get_moonboard(year)
-        m2  = get_moonboard(year)
+        m1 = get_moonboard(year)
+        m2 = get_moonboard(year)
         # Then
         self.assertEqual(m1, m2)
 

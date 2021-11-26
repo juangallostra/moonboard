@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import List
 
+
 @dataclass
 class Setter:
     """
@@ -16,6 +17,7 @@ class Setter:
     nickname: str
     firstname: str
     lastname: str
+
 
 @dataclass
 class Move:
@@ -38,6 +40,7 @@ class Move:
     is_start: bool = False
     is_end: bool = False
 
+
 class Problem():
     """
     Representation of a problem. This class is used to store the problem information in a format
@@ -53,7 +56,7 @@ class Problem():
     :type is_benchmark: bool
     """
 
-    def __init__(self, name:str, grade:str, moves:List[Move], is_benchmark:bool, **kw) -> None:
+    def __init__(self, name: str, grade: str, moves: List[Move], is_benchmark: bool, **kw) -> None:
         """
         Initialize a new Problem instance.
         """

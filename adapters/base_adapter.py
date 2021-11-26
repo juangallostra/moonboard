@@ -1,5 +1,6 @@
 from models.problem import Problem
 
+
 class BaseProblemAdapter():
     """
     Map problem data to a Python object that the renderer can use.
@@ -16,4 +17,3 @@ class BaseProblemAdapter():
         :raises NotImplementedError: If the method is not implemented 
         """
         raise NotImplementedError
-

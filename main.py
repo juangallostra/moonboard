@@ -5,11 +5,14 @@ from adapters.default import DefaultProblemAdapter
 from adapters.crg import CRGProblemAdapter
 import json
 
+
 def main():
     # Create Renderer
     config = RendererConfig()
-    renderer = ProblemRenderer(get_moonboard(2017), DefaultProblemAdapter(), config)
-    crg_renderer = ProblemRenderer(get_moonboard(2017), CRGProblemAdapter(), config)
+    renderer = ProblemRenderer(get_moonboard(
+        2017), DefaultProblemAdapter(), config)
+    crg_renderer = ProblemRenderer(
+        get_moonboard(2017), CRGProblemAdapter(), config)
     # Load data
     with open('problems.json', 'r') as f:
         problems = json.load(f)

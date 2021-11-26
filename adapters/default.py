@@ -2,10 +2,12 @@ from typing import Any, Dict
 from adapters.base_adapter import BaseProblemAdapter
 from models.problem import Problem, Setter, Move
 
+
 class DefaultProblemAdapter(BaseProblemAdapter):
     """
     Map problem data to a Python object that the renderer can use.
     """
+
     def map_problem(self, problem_data: Dict[str, Any]) -> Problem:
         """
         Given a problem data dictionary, return a Problem object
@@ -37,12 +39,13 @@ class DefaultProblemAdapter(BaseProblemAdapter):
                 id = int(id)
             # row mapping
             col = move['Description'][0]
-            row = move['Description'][1:] 
+            row = move['Description'][1:]
             move_col = ord(col.lower()) - ord('a')
             move_row = row
             if isinstance(row, str):
                 move_row = int(row)
-            m = Move(id, move_row, move_col, move['Description'], move['IsStart'], move['IsEnd'])
+            m = Move(id, move_row, move_col,
+                     move['Description'], move['IsStart'], move['IsEnd'])
             moves.append(m)
         # Parse rest of data
         return Problem(
