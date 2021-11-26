@@ -155,7 +155,7 @@ class MoonBoard():
 
 def get_moonboard(year: int) -> MoonBoard:
     """
-    Given a year, return a Moonboard object encapsulating the
+    Factory function. Given a year, return a Moonboard object encapsulating the
     Moonboard layout info of that year.
 
     :param year: Year of the desired Moonboard layout
