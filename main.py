@@ -4,7 +4,7 @@ from moonboard import get_moonboard
 from moonboard import DefaultProblemAdapter
 import json
 
-if __name__ == "__main__":
+def main():
     # Create Renderer
     config = RendererConfig()
     renderer = ProblemRenderer(get_moonboard(2017), DefaultProblemAdapter(), config)
@@ -13,3 +13,6 @@ if __name__ == "__main__":
         problems = json.load(f)
 
     renderer.render_problem(problems['339318'], with_info=True)
+
+if __name__ == "__main__":
+    main()
