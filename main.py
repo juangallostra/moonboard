@@ -14,10 +14,10 @@ def main():
     crg_renderer = ProblemRenderer(
         get_moonboard(2017), CRGProblemAdapter(), config)
     # Load data
-    with open('problems.json', 'r') as f:
+    with open('data/problems.json', 'r') as f:
         problems = json.load(f)
         renderer.render_problem(problems['339318'], with_info=True)
-    with open('crg.json', 'r') as f:
+    with open('data/crg.json', 'r') as f:
         crg_problems = json.load(f)
         crg_renderer.render_problem(crg_problems['1'])
 
