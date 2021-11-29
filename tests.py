@@ -65,6 +65,16 @@ class MoonboardTests(unittest.TestCase):
         self.assertRaises(ValueError, get_moonboard, year)
 
 class GeneratorsTests(unittest.TestCase):
+    def test_empy_generator(self):
+        # Given
+        from generators.base_generator import BaseGenerator
+        # When
+        class EmptyGen(BaseGenerator):
+            pass
+        gen = EmptyGen()
+        with self.assertRaises(NotImplementedError) as context:
+            gen.generate()
+
     def test_ahoughton_generator(self):
         # Given
         from generators.ahoughton import AhoughtonGenerator
@@ -73,7 +83,7 @@ class GeneratorsTests(unittest.TestCase):
         p = a_gen.generate()
         # Then
         self.assertTrue('18' in p[0])
-        self.assertTrue('5' in p[-1])
+        self.assertTrue(p[-1][-1] in '6543')
         self.assertTrue(len(p) > 2)
 
 
