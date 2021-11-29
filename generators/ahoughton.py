@@ -56,12 +56,13 @@ class AhoughtonGenerator(BaseGenerator):
     def generate(self):
         """[summary]
         """
+        from selenium.webdriver.common.by import By
         driver = self._get_driver()
         driver.get("https://ahoughton.com/moon")
         # generate a new climb
-        driver.find_elements_by_class_name('red')[0].click()
+        driver.find_elements(By.CLASS_NAME, 'red')[0].click()
         # get moves
-        moves = driver.find_elements_by_class_name('m-fadeIn')
+        moves = driver.find_elements(By.CLASS_NAME, 'm-fadeIn')
         parsed_moves = []
         for move in moves:
             move_coords = move.get_attribute('id')  # D18 or whatever
