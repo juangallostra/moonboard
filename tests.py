@@ -64,6 +64,18 @@ class MoonboardTests(unittest.TestCase):
         )  # Test error message?
         self.assertRaises(ValueError, get_moonboard, year)
 
+class GeneratorsTests(unittest.TestCase):
+    def test_ahoughton_generator(self):
+        # Given
+        from generators.ahoughton import AhoughtonGenerator
+        a_gen = AhoughtonGenerator()
+        # When
+        p = a_gen.generate()
+        # Then
+        self.assertTrue('18' in p[0])
+        self.assertTrue('5' in p[-1])
+        self.assertTrue(len(p) > 2)
+
 
 if __name__ == '__main__':
     unittest.main()

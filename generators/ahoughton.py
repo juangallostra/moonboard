@@ -1,30 +1,61 @@
+from typing import List
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from generators.base_generator import BaseGenerator
 
+
 class AhoughtonGenerator(BaseGenerator):
-    def __init__(self) -> None:
+    """[summary]
+
+    :param BaseGenerator: [description]
+    :type BaseGenerator: [type]
+    """
+
+    def __init__(self, ) -> None:
+        """[summary]
+        """
         self.name = 'ahoughton'
         super().__init__()
 
-    def _configure_chrome_driver(self):
+    def _configure_chrome_driver(self, args_to_add: List[str]) -> Options:
+        """
+        Set and return the configuration of the driver used to load the page
+        and generate a new problem. This is a Chrome-specific configuration.
+        It disables browser extensions and gpu and sets the headless option to True. 
+
+        :param args: arguments to pass to the driver
+        :type args: List[str]
+        :return: driver configuration options
+        :rtype: Options
+        """
         chrome_options = Options()
-        chrome_options.add_argument("--disable-extensions")
-        chrome_options.add_argument("--disable-gpu")
-        #chrome_options.add_argument("--no-sandbox") # linux only
-        chrome_options.add_argument("--headless")
-        # chrome_options.headless = True # also works
+        for arg in args_to_add:
+            chrome_options.add_argument(arg)
         return chrome_options
 
-    def _get_driver(self):
-        return webdriver.Chrome(
-            'C:/.selenium_drivers/chromedriver.exe', 
-            options=self._configure_chrome_driver()
-        )
-        # driver = webdriver.Firefox('C:/.selenium_drivers/geckodriver.exe')
-        # driver = webdriver.Firefox('C:/.selenium_drivers/geckodriver.exe')
+    def _get_driver(self, path: str = 'C:/.selenium_drivers/chromedriver.exe') -> webdriver:
+        """
+        Get the configured driver used to load the page and generate a new problem.
 
-    def load_page(self):
+        :param path: driver path, defaults to 'C:/.selenium_drivers/chromedriver.exe'
+        :type path: str, optional
+        :return: the configured driver
+        :rtype: webdriver
+        """
+        return webdriver.Chrome(
+            path,
+            options=self._configure_chrome_driver(
+                [
+                    "--disable-extensions",
+                    "--disable-gpu",
+                    "--headless"
+                ]
+            )
+        )
+
+    def generate(self):
+        """[summary]
+        """
         driver = self._get_driver()
         driver.get("https://ahoughton.com/moon")
         # generate a new climb
@@ -33,14 +64,6 @@ class AhoughtonGenerator(BaseGenerator):
         moves = driver.find_elements_by_class_name('m-fadeIn')
         parsed_moves = []
         for move in moves:
-            move_coords = move.get_attribute('id') # D18 or whatever
+            move_coords = move.get_attribute('id')  # D18 or whatever
             parsed_moves.append(move_coords)
-        print(parsed_moves) # <- List of moves
-
-    def generate(self):
-        pass
-
-
-if __name__ == '__main__':
-    a = AhoughtonGenerator()
-    a.load_page()
+        return parsed_moves
