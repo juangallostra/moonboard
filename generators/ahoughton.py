@@ -2,19 +2,17 @@ from typing import List
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from generators.base_generator import BaseGenerator
+from selenium.webdriver.common.by import By
 
 
 class AhoughtonGenerator(BaseGenerator):
-    """[summary]
-
-    :param BaseGenerator: [description]
-    :type BaseGenerator: [type]
+    """
+    Generate problems from the Ahoughton website. 
+    Inherits from BaseGenerator, which assumes the class
+    implements a generate() method.
     """
 
     def __init__(self, ) -> None:
-        """[summary]
-        """
-        self.name = 'ahoughton'
         super().__init__()
 
     def _configure_chrome_driver(self, args_to_add: List[str]) -> Options:
@@ -54,9 +52,9 @@ class AhoughtonGenerator(BaseGenerator):
         )
 
     def generate(self):
-        """[summary]
         """
-        from selenium.webdriver.common.by import By
+        Generate a new problem from the Ahoughton website.
+        """
         driver = self._get_driver()
         driver.get("https://ahoughton.com/moon")
         # generate a new climb
