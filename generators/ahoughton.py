@@ -1,4 +1,4 @@
-from typing import List
+from typing import Any, List
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from generators.base_generator import BaseGenerator
@@ -13,6 +13,8 @@ class AhoughtonGenerator(BaseGenerator):
     """
 
     def __init__(self, ) -> None:
+        self.MOVE_CSS_CLASS = 'm-fadeIn'
+        self.GENERATE_BUTTON_CSS_CLASS = 'red'
         super().__init__()
 
     def _configure_chrome_driver(self, args_to_add: List[str]) -> Options:
@@ -51,6 +53,14 @@ class AhoughtonGenerator(BaseGenerator):
             )
         )
 
+    def _parse_moves(self, moves: Any) -> List[str]:
+        parsed_moves = []
+        for move in moves:
+            move_coords = move.get_attribute('id')  # D18 or whatever
+            parsed_moves.append(move_coords)
+        return parsed_moves
+
+
     def generate(self):
         """
         Generate a new problem from the Ahoughton website.
@@ -58,11 +68,7 @@ class AhoughtonGenerator(BaseGenerator):
         driver = self._get_driver()
         driver.get("https://ahoughton.com/moon")
         # generate a new climb
-        driver.find_elements(By.CLASS_NAME, 'red')[0].click()
+        driver.find_elements(By.CLASS_NAME, self.GENERATE_BUTTON_CSS_CLASS)[0].click()
         # get moves
-        moves = driver.find_elements(By.CLASS_NAME, 'm-fadeIn')
-        parsed_moves = []
-        for move in moves:
-            move_coords = move.get_attribute('id')  # D18 or whatever
-            parsed_moves.append(move_coords)
-        return parsed_moves
+        moves = driver.find_elements(By.CLASS_NAME, self.MOVE_CSS_CLASS)
+        return self._parse_moves(moves)
