@@ -66,25 +66,33 @@ class MoonboardTests(unittest.TestCase):
 
 class GeneratorsTests(unittest.TestCase):
     def test_empy_generator(self):
+        """
+        Test that an empty generator raises a NotImplementedError when
+        generate() is called
+        """
         # Given
         from generators.base_generator import BaseGenerator
         # When
         class EmptyGen(BaseGenerator):
             pass
         gen = EmptyGen()
+        # Then
         with self.assertRaises(NotImplementedError) as context:
             gen.generate()
 
     def test_ahoughton_generator(self):
+        """
+        Test that the Ahoughton generator returns a valid MoonBoard problem
+        """
         # Given
         from generators.ahoughton import AhoughtonGenerator
         a_gen = AhoughtonGenerator()
         # When
-        p = a_gen.generate()
+        problem = a_gen.generate()
         # Then
-        self.assertTrue('18' in p[0])
-        self.assertTrue(p[-1][-1] in '6543')
-        self.assertTrue(len(p) > 2)
+        self.assertTrue('18' in problem[0]) # assert climb ends at top row
+        self.assertTrue(problem[-1][-1] in '6543') # assert climb starts at bottom rows
+        self.assertTrue(len(problem) > 2) # assert there are more than 2 moves
 
 
 if __name__ == '__main__':
