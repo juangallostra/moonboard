@@ -15,9 +15,11 @@ class AhoughtonGenerator(BaseGenerator):
 
     :param year: Moonboard layout year for which we want to generate problems. Defaults to 2016.
     :type year: int, optional
+    :param path: driver path, defaults to 'C:/.selenium_drivers/chromedriver.exe'
+    :type path: str, optional
     """
 
-    def __init__(self, year: int = 2016) -> None:
+    def __init__(self, year: int = 2016, driver_path: str = "") -> None:
         # CSS selectors used to identify the elements on the page
         # Directly extracted from the website
         self.MOVE_CSS_CLASS = 'm-fadeIn'
@@ -27,6 +29,7 @@ class AhoughtonGenerator(BaseGenerator):
             2017: 'div.option:nth-child(1) > label:nth-child(3) > input:nth-child(1)'
         }
         self.year = year
+        self.driver_path = driver_path
         super().__init__()
 
     def _configure_chrome_driver(self, *args, headless: bool = True) -> Options:
@@ -47,26 +50,25 @@ class AhoughtonGenerator(BaseGenerator):
             chrome_options.add_argument(arg)
         return chrome_options
 
-    def _get_chrome_driver(self, path: str = 'C:/.selenium_drivers/chromedriver.exe') -> webdriver:
+    def _get_chrome_driver(self) -> webdriver:
         """
         Get the configured driver used to load the page and generate a new problem.
 
-        :param path: driver path, defaults to 'C:/.selenium_drivers/chromedriver.exe'
-        :type path: str, optional
         :return: the configured driver
         :rtype: webdriver
         """
-        if os.path.isfile(path):
+        if not os.path.isfile(self.driver_path):
+            import chromedriver_binary
             return webdriver.Chrome(
-                service=Service(path),
                 options=self._configure_chrome_driver(
                     "--disable-extensions",
                     "--disable-gpu",
                     headless=True
                 )
             )
-        import chromedriver_binary
+
         return webdriver.Chrome(
+            service=Service(self.driver_path),
             options=self._configure_chrome_driver(
                 "--disable-extensions",
                 "--disable-gpu",

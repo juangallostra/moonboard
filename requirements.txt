@@ -6,7 +6,7 @@ Babel==2.9.1
 certifi==2020.6.20
 cffi==1.15.0
 chardet==3.0.4
-chromedriver-binary==97.0.4692.20.0
+chromedriver-binary==96.0.4664.45
 colorama==0.4.4
 cryptography==36.0.0
 docutils==0.17.1

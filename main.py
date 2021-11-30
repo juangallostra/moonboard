@@ -27,14 +27,14 @@ def main():
         AhoughtonAdapter(),
         config
     )
-    ahoughton_generator_2016 = AhoughtonGenerator(year=2016)
+    ahoughton_generator_2016 = AhoughtonGenerator(year=2016, driver_path='C:/.selenium_drivers/chromedriver.exe')
 
     ahoughton_renderer_2017 = ProblemRenderer(
         get_moonboard(2017),
         AhoughtonAdapter(),
         config
     )
-    ahoughton_generator_2017 = AhoughtonGenerator(year=2017)
+    ahoughton_generator_2017 = AhoughtonGenerator(year=2017, driver_path='C:/.selenium_drivers/chromedriver.exe')
     
     # Load data
     with open('data/problems.json', 'r') as f:
