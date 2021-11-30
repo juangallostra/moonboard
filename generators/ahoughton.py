@@ -1,5 +1,6 @@
 from typing import Any, List
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from generators.base_generator import BaseGenerator
 from selenium.webdriver.common.by import By
@@ -55,7 +56,7 @@ class AhoughtonGenerator(BaseGenerator):
         :rtype: webdriver
         """
         return webdriver.Chrome(
-            path,
+            service=Service(path),
             options=self._configure_chrome_driver(
                 "--disable-extensions",
                 "--disable-gpu",
@@ -93,4 +94,6 @@ class AhoughtonGenerator(BaseGenerator):
         driver.find_elements(By.CLASS_NAME, self.GENERATE_BUTTON_CSS_CLASS)[0].click()
         # get moves
         moves = driver.find_elements(By.CLASS_NAME, self.MOVE_CSS_CLASS)
+        # Quit the driver
+        driver.quit()
         return self._parse_moves(moves)
