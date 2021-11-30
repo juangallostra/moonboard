@@ -13,7 +13,7 @@ class CRGProblemAdapter(BaseProblemAdapter):
         Given a problem data dictionary, return a Problem object
 
         :param problem_data: Source from which to map the problem
-        :type problem_data: dict
+        :type problem_data: List[Any]
         :return: Problem object with the parsed problem data as attributes
         :rtype: Problem
         """
