@@ -4,6 +4,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from generators.base_generator import BaseGenerator
 from selenium.webdriver.common.by import By
+import os
 
 
 class AhoughtonGenerator(BaseGenerator):
@@ -55,8 +56,17 @@ class AhoughtonGenerator(BaseGenerator):
         :return: the configured driver
         :rtype: webdriver
         """
+        if os.path.isfile(path):
+            return webdriver.Chrome(
+                service=Service(path),
+                options=self._configure_chrome_driver(
+                    "--disable-extensions",
+                    "--disable-gpu",
+                    headless=True
+                )
+            )
+        import chromedriver_binary
         return webdriver.Chrome(
-            service=Service(path),
             options=self._configure_chrome_driver(
                 "--disable-extensions",
                 "--disable-gpu",
@@ -80,7 +90,6 @@ class AhoughtonGenerator(BaseGenerator):
             parsed_moves.append(move_coords)
         return parsed_moves
 
-
     def generate(self) -> str:
         """
         Generate a new problem from the Ahoughton website.
@@ -91,9 +100,11 @@ class AhoughtonGenerator(BaseGenerator):
         driver = self._get_chrome_driver()
         driver.get("https://ahoughton.com/moon")
         # Select moonboard layout
-        driver.find_element(By.CSS_SELECTOR, self.CSS_MOONBOARD_LAYOUT_SELECTORS[self.year]).click()
+        driver.find_element(
+            By.CSS_SELECTOR, self.CSS_MOONBOARD_LAYOUT_SELECTORS[self.year]).click()
         # generate a new climb
-        driver.find_elements(By.CLASS_NAME, self.GENERATE_BUTTON_CSS_CLASS)[0].click()
+        driver.find_elements(By.CLASS_NAME, self.GENERATE_BUTTON_CSS_CLASS)[
+            0].click()
         # get moves
         moves = driver.find_elements(By.CLASS_NAME, self.MOVE_CSS_CLASS)
         # Quit the driver
