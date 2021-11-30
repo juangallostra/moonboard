@@ -48,8 +48,8 @@ def main():
     problem = ahoughton_generator_2016.generate()
     ahoughton_renderer_2016.render_problem(problem)
     # 2017
-    problem = ahoughton_generator_2016.generate()
-    ahoughton_renderer_2016.render_problem(problem)
+    problem = ahoughton_generator_2017.generate()
+    ahoughton_renderer_2017.render_problem(problem)
     
 
 if __name__ == "__main__":
