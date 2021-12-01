@@ -109,6 +109,6 @@ class AhoughtonGenerator(BaseGenerator):
             0].click()
         # get moves
         moves = driver.find_elements(By.CLASS_NAME, self.MOVE_CSS_CLASS)
-        # Quit the driver
-        # driver.quit()
+        # Close the driver
+        # driver.close()
         return self._parse_moves(moves)

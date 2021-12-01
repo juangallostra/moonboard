@@ -64,6 +64,7 @@ class MoonboardTests(unittest.TestCase):
         )  # Test error message?
         self.assertRaises(ValueError, get_moonboard, year)
 
+
 class GeneratorsTests(unittest.TestCase):
     def test_empy_generator(self):
         """
@@ -73,6 +74,7 @@ class GeneratorsTests(unittest.TestCase):
         # Given
         from generators.base_generator import BaseGenerator
         # When
+
         class EmptyGen(BaseGenerator):
             pass
         gen = EmptyGen()
@@ -90,9 +92,10 @@ class GeneratorsTests(unittest.TestCase):
         # When
         problem = a_gen.generate()
         # Then
-        self.assertTrue('18' in problem[0]) # assert climb ends at top row
-        self.assertTrue(problem[-1][-1] in '6543') # assert climb starts at bottom rows
-        self.assertTrue(len(problem) > 2) # assert there are more than 2 moves
+        self.assertTrue('18' in problem[0])  # assert climb ends at top row
+        # assert climb starts at bottom rows
+        self.assertTrue(problem[-1][-1] in '6543') # This fails sometimes
+        self.assertTrue(len(problem) > 2)  # assert there are more than 2 moves
 
 
 if __name__ == '__main__':
